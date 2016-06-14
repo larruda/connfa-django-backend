@@ -59,7 +59,10 @@ INSTALLED_APPS = (
 CONSTANCE_ADDITIONAL_FIELDS = {
     'checkUpdates_select': ['django.forms.fields.MultipleChoiceField', {
         'widget': 'django.forms.SelectMultiple',
-        'choices': ((0, "getSettings"), (1, "getTypes"), (2, "getLevels"))
+        'choices': ((0, "getSettings"), (1, "getTypes"), (2, "getLevels"),
+            (3, "getTracks"), (4, "getSpeakers"), (5, "getLocations"),
+            (6, "getFloorPlans"), (7, "getSessions"), (8, "getBofs"),
+            (9, "getSocialEvents"), (10, "getPOI"), (11, "getInfo"))
     }],
 }
 
@@ -115,8 +118,8 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/<your-project-id>:<your-cloud-sql-instance>',
-            'NAME': '<your-database-name>',
+            'HOST': '/cloudsql/drupalcamp-backend:drupalcamp-sql-1st-gen',
+            'NAME': 'connfa_django_backend',
             'USER': 'root',
         }
     }
@@ -138,7 +141,7 @@ else:
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -152,3 +155,8 @@ USE_TZ = True
 
 STATIC_ROOT='static'
 STATIC_URL = '/static/'
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
