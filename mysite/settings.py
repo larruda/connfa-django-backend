@@ -37,7 +37,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '-c&qt=71oi^e5s8(ene*$b89^#%*0xeve$x_trs91veok9#0h0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -118,8 +118,8 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/drupalcamp-backend:drupalcamp-sql-1st-gen',
-            'NAME': 'connfa_django_backend',
+            'HOST': '/cloudsql/<your-project-id>:<your-cloud-sql-instance>',
+            'NAME': '<your-database-name>',
             'USER': 'root',
         }
     }
