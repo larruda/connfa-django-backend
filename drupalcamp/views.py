@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.core import serializers
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
 
 import json
 import pprint
+import pytz
 
 from .models import Type
 from .models import Level
@@ -27,7 +29,7 @@ def index(request):
 
 def checkUpdates(request):
     response_data = {
-        "idsForUpdate": [ int(x[0]) for x in config.CHECK_UPDATES ],
+        "idsForUpdate": [ int(x) for x in config.CHECK_UPDATES ],
     }
     return JsonResponse(response_data)
 
@@ -129,12 +131,17 @@ def getLocations(request):
 
 
 def getSessions(request):
+    return parseEvents(model=Session)
+
+
+def parseEvents(model):
     response_data = {}
     response_data['days'] = []
-    days = Session.objects.values_list('start_date', flat=True).distinct()
+    days = model.objects.values_list('start', flat=True).distinct()
+    sp_timezone = pytz.timezone('America/Sao_Paulo')
 
     for day in days.iterator():
-        sessions = Session.objects.filter(start_date=day)
+        sessions = model.objects.filter(start=day)
         events = []
         for session in sessions.iterator():
             events.append({
@@ -145,8 +152,8 @@ def getSessions(request):
                 "version": session.version,
                 "experienceLevel": session.experienceLevel and session.experienceLevel.id or None,
                 "type": session.type and session.type.id or None,
-                "from": session.start_date.strftime('%Y-%m-%dT%H:%M:%S'),
-                "to": session.end_date.strftime('%Y-%m-%dT%H:%M:%S'),
+                "from": session.start.astimezone(pytz.timezone(settings.TIME_ZONE)).isoformat(),
+                "to": session.end.astimezone(pytz.timezone(settings.TIME_ZONE)).isoformat(),
                 "speakers": [ speaker.id for speaker in session.speakers.all().iterator() ],
                 "track": session.track and session.track.id or None,
                 "order": session.order,
@@ -163,11 +170,11 @@ def getSessions(request):
 
 
 def getBofs(request):
-    return JsonResponse({})
+    return parseEvents(model=BoF)
 
 
 def getSocialEvents(request):
-    return JsonResponse({})
+    return parseEvents(model=SocialEvent)
 
 
 def getPOI(request):
