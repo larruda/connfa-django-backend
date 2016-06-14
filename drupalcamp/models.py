@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from datetime import datetime
+
 class BaseAbstractModel(models.Model):
     order = models.SmallIntegerField(blank=True, null=True)
     deleted = models.BooleanField()
@@ -35,8 +37,8 @@ class Speaker(BaseAbstractModel):
     characteristic = models.TextField()
     jobTitle = models.CharField(max_length=200)
     organizationName = models.CharField(max_length=200)
-    twitterName = models.CharField(max_length=200)
-    webSite = models.CharField(max_length=200)
+    twitterName = models.CharField(max_length=200, blank=True, null=True)
+    webSite = models.CharField(max_length=200, blank=True, null=True)
     avatarImageURL = models.URLField(blank=True, null=True)
 
     def __unicode__(self):
@@ -61,8 +63,8 @@ class POI(BaseAbstractModel):
 
 
 class Event(BaseAbstractModel):
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start = models.DateTimeField(default=datetime.now)
+    end = models.DateTimeField(default=datetime.now)
     name = models.CharField(max_length=200)
     place = models.CharField(max_length=200)
     text = models.TextField()
